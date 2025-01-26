@@ -43,7 +43,8 @@ namespace SpecFlowProject1.StepDefinitions
         [Then(@"Verify the title of page")]
         public void ThenVerifyTheTitleOfPage()
         {
-            Assert.Equals(cp.getTitle(),"Testers Talk - YouTube");
+            Assert.That(cp.getTitle(), Is.EqualTo("Testers Talk - YouTube"));
+
         }
     }
 }
