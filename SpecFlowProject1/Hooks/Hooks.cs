@@ -60,7 +60,7 @@ namespace SpecFlowProject1.Hooks
             var options = new ChromeOptions();
             //driver = new RemoteWebDriver(new Uri("http://localhost:4444/"), options);
 
-            WebDriverFactory.CreateWebDriver("chrome");
+           driver = WebDriverFactory.CreateWebDriver("chrome");
 
             driver.Navigate().GoToUrl("https://www.youtube.com");
             driver.Manage().Window.Maximize();
