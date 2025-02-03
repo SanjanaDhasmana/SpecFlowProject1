@@ -10,8 +10,7 @@ namespace SpecFlowProject1.StepDefinitions
 
         public DataDrivenTestingStepDefinitions(IWebDriver driver)
         {
-               this.driver = driver;  
-           
+               this.driver = driver;             
         }
 
 

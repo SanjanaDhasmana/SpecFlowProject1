@@ -2,7 +2,6 @@
 
 A short summary of the feature
 
-@TestersTalk
 Scenario: Search for tester talk
 	Given Open the browser
 	When Enter the URL

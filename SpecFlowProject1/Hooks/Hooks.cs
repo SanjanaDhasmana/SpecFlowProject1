@@ -5,8 +5,11 @@ using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Remote;
 using SpecFlowProject1.Utility;
 using System.Configuration;
+using TechTalk.SpecFlow.Infrastructure;
 
 namespace SpecFlowProject1.Hooks
 {
@@ -14,7 +17,6 @@ namespace SpecFlowProject1.Hooks
     public sealed class Hooks : ExtentReport
     {
         private readonly IObjectContainer Container;
-        private readonly IConfiguration _configuration;
         IWebDriver driver;
         public Hooks(IObjectContainer container)
         {
@@ -25,6 +27,7 @@ namespace SpecFlowProject1.Hooks
         public static void BeforeTestRun()
         {
             NUnit.Framework.TestContext.Progress.WriteLine("Running before Test run");
+            
             Console.WriteLine("Running before Test run");
             ExtentReportInit();
         }
@@ -49,24 +52,15 @@ namespace SpecFlowProject1.Hooks
             Console.WriteLine("Running after feature");
         }
 
-
-        [BeforeScenario("@TestersTalks")]
-        public void BeforeScenarioWithTag()
-        {
-            Console.WriteLine("Running inside Tag hooks in Specflow");
-        }
-
         [BeforeScenario(Order = 1)]
         public void FirstBeforeScenario(ScenarioContext scenarioContext)
         {
-            Console.WriteLine("Running before scenario");
-            //string browser = scenarioContext.ScenarioInfo.Tags[1];
-            //driver = WebDriverFactory.CreateWebDriver(browser);
+            Console.WriteLine("Running before scenario In Chrme");
 
-            driver = new ChromeDriver();
+            var options = new ChromeOptions();
+            driver = new RemoteWebDriver(new Uri("http://localhost:4444/"), options);
 
             driver.Navigate().GoToUrl("https://www.youtube.com");
-            Thread.Sleep(2000);
             driver.Manage().Window.Maximize();
             Container.RegisterInstanceAs<IWebDriver>(driver);
             _scenario = _feature.CreateNode(scenarioContext.ScenarioInfo.Title);

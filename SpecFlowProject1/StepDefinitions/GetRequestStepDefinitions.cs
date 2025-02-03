@@ -36,10 +36,8 @@ namespace SpecFlowProject1.StepDefinitions
                 outputHelper.WriteLine(item.last_name);
                 outputHelper.WriteLine(item.first_name);
                 outputHelper.WriteLine(item.avatar);
-            }
-             
+            }   
         }
-
 
         [Then(@"Request should be a success with (.*) Status Code")]
         public void ThenRequestShouldBeASuccessWithStatusCode(int p0)

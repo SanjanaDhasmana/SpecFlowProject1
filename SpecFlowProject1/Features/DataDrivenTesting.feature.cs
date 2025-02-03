@@ -75,11 +75,13 @@ namespace SpecFlowProject1.Features
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Search for tester talk")]
-        [NUnit.Framework.CategoryAttribute("TestersTalk")]
+        [NUnit.Framework.CategoryAttribute("chrome")]
+        [NUnit.Framework.CategoryAttribute("firefox")]
         public void SearchForTesterTalk()
         {
             string[] tagsOfScenario = new string[] {
-                    "TestersTalk"};
+                    "chrome",
+                    "firefox"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Search for tester talk", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 6
