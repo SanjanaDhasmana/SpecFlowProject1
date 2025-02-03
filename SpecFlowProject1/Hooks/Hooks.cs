@@ -58,7 +58,9 @@ namespace SpecFlowProject1.Hooks
             Console.WriteLine("Running before scenario In Chrme");
 
             var options = new ChromeOptions();
-            driver = new RemoteWebDriver(new Uri("http://localhost:4444/"), options);
+            //driver = new RemoteWebDriver(new Uri("http://localhost:4444/"), options);
+
+            WebDriverFactory.CreateWebDriver("chrome");
 
             driver.Navigate().GoToUrl("https://www.youtube.com");
             driver.Manage().Window.Maximize();
