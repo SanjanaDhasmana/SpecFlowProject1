@@ -1,4 +1,5 @@
-﻿using AventStack.ExtentReports;
+﻿using Allure.Net.Commons;
+using AventStack.ExtentReports;
 using AventStack.ExtentReports.Gherkin.Model;
 using BoDi;
 using Microsoft.Extensions.Configuration;
@@ -17,10 +18,12 @@ namespace SpecFlowProject1.Hooks
     public sealed class Hooks : ExtentReport
     {
         private readonly IObjectContainer Container;
+        private readonly ScenarioContext _scenarioContext;
         IWebDriver driver;
-        public Hooks(IObjectContainer container)
+        public Hooks(IObjectContainer container, ScenarioContext scenarioContext)
         {
             Container = container;
+            _scenarioContext = scenarioContext;
         }
 
         [BeforeTestRun]
@@ -29,21 +32,21 @@ namespace SpecFlowProject1.Hooks
             NUnit.Framework.TestContext.Progress.WriteLine("Running before Test run");
             
             Console.WriteLine("Running before Test run");
-            ExtentReportInit();
+           // ExtentReportInit();
         }
 
         [AfterTestRun]
         public static void AfterTestRun()
         {
             Console.WriteLine("Running after Test run");
-            ExtentReportTearDown();
+           // ExtentReportTearDown();
         }
 
         [BeforeFeature]
         public static void BeforeFeature(FeatureContext featureContext)
         {
             Console.WriteLine("Running before feature");
-            _feature = _extentReports.CreateTest(featureContext.FeatureInfo.Title);
+           // _feature = _extentReports.CreateTest(featureContext.FeatureInfo.Title);
         }
 
         [AfterFeature]
@@ -59,13 +62,13 @@ namespace SpecFlowProject1.Hooks
 
             var options = new ChromeOptions();
             //driver = new RemoteWebDriver(new Uri("http://localhost:4444/"), options);
-
-           driver = WebDriverFactory.CreateWebDriver("chrome");
-
+     
+            driver = WebDriverFactory.CreateWebDriver("chrome");
+            Container.RegisterInstanceAs<IWebDriver>(driver);
             driver.Navigate().GoToUrl("https://www.youtube.com");
             driver.Manage().Window.Maximize();
-            Container.RegisterInstanceAs<IWebDriver>(driver);
-            _scenario = _feature.CreateNode(scenarioContext.ScenarioInfo.Title);
+           
+            //_scenario = _feature.CreateNode(scenarioContext.ScenarioInfo.Title);
         }
 
         [AfterScenario]
@@ -83,53 +86,54 @@ namespace SpecFlowProject1.Hooks
         public void AfterStep(ScenarioContext scenarioContext)
         {
             Console.WriteLine("Running after Step");
-            string stepType = scenarioContext.StepContext.StepInfo.StepDefinitionType.ToString();
-            string stepName = scenarioContext.StepContext.StepInfo.Text;
+            //string stepType = scenarioContext.StepContext.StepInfo.StepDefinitionType.ToString();
+            //string stepName = scenarioContext.StepContext.StepInfo.Text;
 
-            var driver = Container.Resolve<IWebDriver>();
+            //var driver = Container.Resolve<IWebDriver>();
 
 
-            //When Scenario passed
-            if (scenarioContext.TestError == null)
-            {
-                if (stepType == "Given")
-                {
-                    _scenario.CreateNode<Given>(stepName);
-                }
-                else if (stepType == "When")
-                {
-                    _scenario.CreateNode<When>(stepName);
-                }
-                else if (stepType == "Then")
-                {
-                    _scenario.CreateNode<Then>(stepName);
-                }
-            }
+            ////When Scenario passed
+            //if (scenarioContext.TestError == null)
+            //{
+            //    if (stepType == "Given")
+            //    {
+            //        _scenario.CreateNode<Given>(stepName);
+            //    }
+            //    else if (stepType == "When")
+            //    {
+            //        _scenario.CreateNode<When>(stepName);
+            //    }
+            //    else if (stepType == "Then")
+            //    {
+            //        _scenario.CreateNode<Then>(stepName);
+            //    }
+            //}
 
             //When Scenario fails
             if (scenarioContext.TestError != null)
             {
+                AllureApi.AddAttachment("Screenshot", "image/png", addScreenShot(driver, scenarioContext));
 
-                if (stepType == "Given")
-                {
-                    _scenario.CreateNode<Given>(stepName).Fail(scenarioContext.TestError.Message,
-                        MediaEntityBuilder.CreateScreenCaptureFromPath(addScreenShot(driver, scenarioContext)).Build());
-                }
-                else if (stepType == "When")
-                {
-                    _scenario.CreateNode<When>(stepName).Fail(scenarioContext.TestError.Message,
-                        MediaEntityBuilder.CreateScreenCaptureFromPath(addScreenShot(driver, scenarioContext)).Build());
-                }
-                else if (stepType == "Then")
-                {
-                    _scenario.CreateNode<Then>(stepName).Fail(scenarioContext.TestError.Message,
-                        MediaEntityBuilder.CreateScreenCaptureFromPath(addScreenShot(driver, scenarioContext)).Build());
-                }
-                else if (stepType == "And")
-                {
-                    _scenario.CreateNode<Then>(stepName).Fail(scenarioContext.TestError.Message,
-                        MediaEntityBuilder.CreateScreenCaptureFromPath(addScreenShot(driver, scenarioContext)).Build());
-                }
+                //if (stepType == "Given")
+                //{
+                //    _scenario.CreateNode<Given>(stepName).Fail(scenarioContext.TestError.Message,
+                //        MediaEntityBuilder.CreateScreenCaptureFromPath(addScreenShot(driver, scenarioContext)).Build());
+                //}
+                //else if (stepType == "When")
+                //{
+                //    _scenario.CreateNode<When>(stepName).Fail(scenarioContext.TestError.Message,
+                //        MediaEntityBuilder.CreateScreenCaptureFromPath(addScreenShot(driver, scenarioContext)).Build());
+                //}
+                //else if (stepType == "Then")
+                //{
+                //    _scenario.CreateNode<Then>(stepName).Fail(scenarioContext.TestError.Message,
+                //        MediaEntityBuilder.CreateScreenCaptureFromPath(addScreenShot(driver, scenarioContext)).Build());
+                //}
+                //else if (stepType == "And")
+                //{
+                //    _scenario.CreateNode<Then>(stepName).Fail(scenarioContext.TestError.Message,
+                //        MediaEntityBuilder.CreateScreenCaptureFromPath(addScreenShot(driver, scenarioContext)).Build());
+                //}
             }
         }
     }
