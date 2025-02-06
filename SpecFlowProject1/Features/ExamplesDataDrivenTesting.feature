@@ -8,5 +8,5 @@ Scenario Outline: Examples Data Driven Testing
 	Then Search with <searchKey>
 	Examples: 
 	| searchKey |
-	| Specflow by testers talk|
-	| Selenium by testers talk|
+	| Specflow Selenium|
+	| Selenium Locators|

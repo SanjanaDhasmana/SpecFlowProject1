@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using NUnit.Framework;
 using OpenQA.Selenium;
+using RestSharp;
 using SpecFlowProject1.Support;
 using TechTalk.SpecFlow.Infrastructure;
 
@@ -10,33 +11,38 @@ namespace SpecFlowProject1.StepDefinitions
     public sealed class GetRequestStepDefinitions
     {
         private IWebDriver driver;
-        HttpClient httpClient;
-        HttpResponseMessage response;
-        string responseBody;
-        private ISpecFlowOutputHelper outputHelper;
+        RestClient client;
+        RestRequest request;
+        RestResponse response;
+
+        ISpecFlowOutputHelper outputHelper;
 
         public GetRequestStepDefinitions(ISpecFlowOutputHelper outputHelper)
         {
             this.outputHelper = outputHelper;
-            httpClient = new HttpClient();
         }
 
         [Given(@"The user sends a GET request with URL ""([^""]*)""")]
         public async Task GivenTheUserSendsAGETRequestWithURL(string uri)
         {
-            response = await httpClient.GetAsync(uri);
-            response.EnsureSuccessStatusCode();
-            responseBody = await response.Content.ReadAsStringAsync();
-            //outputHelper.WriteLine(responseBody);
+            client = new RestClient(uri);
+            request = new RestRequest("", Method.Get);
+            response = await client.ExecuteAsync(request);
 
-            var deSerializedData=JsonConvert.DeserializeObject<JSONData>(responseBody);
-            outputHelper.WriteLine("after deserialization page is "+deSerializedData.page.ToString());
-            foreach (var item in deSerializedData.data) 
+            if (response.IsSuccessful)
             {
-                outputHelper.WriteLine(item.last_name);
-                outputHelper.WriteLine(item.first_name);
-                outputHelper.WriteLine(item.avatar);
-            }   
+                var data = JsonConvert.DeserializeObject<JSONData>(response.Content);
+                if (data != null)
+                {
+                    outputHelper.WriteLine($"Page: {data.page}");
+                    outputHelper.WriteLine($"Per page: {data.per_page}");
+                    outputHelper.WriteLine($"Total Pages: {data.total_pages}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Error: {response.ErrorMessage}");
+            }
         }
 
         [Then(@"Request should be a success with (.*) Status Code")]

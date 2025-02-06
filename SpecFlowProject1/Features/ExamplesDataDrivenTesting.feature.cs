@@ -75,8 +75,8 @@ namespace SpecFlowProject1.Features
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Examples Data Driven Testing")]
-        [NUnit.Framework.TestCaseAttribute("Specflow by testers talk", null)]
-        [NUnit.Framework.TestCaseAttribute("Selenium by testers talk", null)]
+        [NUnit.Framework.TestCaseAttribute("Specflow Selenium", null)]
+        [NUnit.Framework.TestCaseAttribute("Selenium Locators", null)]
         public void ExamplesDataDrivenTesting(string searchKey, string[] exampleTags)
         {
             string[] tagsOfScenario = exampleTags;
