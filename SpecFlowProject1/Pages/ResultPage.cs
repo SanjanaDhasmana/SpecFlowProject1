@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using NUnit.Framework;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 
 namespace SpecFlowProject1.Pages
@@ -13,6 +14,7 @@ namespace SpecFlowProject1.Pages
         }
         IWebElement channelTextBox => _driver.FindElement(By.LinkText("Testers Talk"));
 
+   
         public ChannelPage ClickOnChannel()
         {
             channelTextBox.Click();
