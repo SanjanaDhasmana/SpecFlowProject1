@@ -1,18 +1,4 @@
 {
-  "capabilities": [
-    {
-      "browserName": "chrome",
-      "maxInstances": 2
-    },
-    {
-      "browserName": "firefox",
-      "maxInstances": 2
-    },
-    {
-      "browserName": "MicrosoftEdge",
-      "maxInstances": 2
-    }
-  ],
-  "hub": "http://localhost:4444",
-  "port": 5555
+  "seleniumGridUrl": "http://localhost:4444/wd/hub",
+  "browsers": [ "Firefox", "Edge" ]
 }

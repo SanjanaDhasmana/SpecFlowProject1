@@ -3,6 +3,8 @@ using AventStack.ExtentReports;
 using AventStack.ExtentReports.Gherkin.Model;
 using BoDi;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using NLog;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -10,6 +12,8 @@ using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Remote;
 using SpecFlowProject1.Utility;
 using System.Configuration;
+using System.Net.NetworkInformation;
+using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Infrastructure;
 
 namespace SpecFlowProject1.Hooks
@@ -20,6 +24,12 @@ namespace SpecFlowProject1.Hooks
         private readonly IObjectContainer Container;
         private readonly ScenarioContext _scenarioContext;
         IWebDriver driver;
+        private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
+        //private static readonly IConfigurationRoot _configuration = new ConfigurationBuilder()
+        //    .SetBasePath(Directory.GetCurrentDirectory())
+        //    .AddJsonFile("node-config.json")
+        //    .Build();
+
         public Hooks(IObjectContainer container, ScenarioContext scenarioContext)
         {
             Container = container;
@@ -29,10 +39,8 @@ namespace SpecFlowProject1.Hooks
         [BeforeTestRun]
         public static void BeforeTestRun()
         {
-            NUnit.Framework.TestContext.Progress.WriteLine("Running before Test run");
-            
-            Console.WriteLine("Running before Test run");
-           // ExtentReportInit();
+            logger.Info("==== Test Execution Started ====");
+            // ExtentReportInit();
         }
 
         [AfterTestRun]
@@ -52,29 +60,33 @@ namespace SpecFlowProject1.Hooks
         [AfterFeature]
         public static void AfterFeature(FeatureContext featureContext)
         {
-            Console.WriteLine("Running after feature");
+            logger.Info("==== Test Execution Finished ====");
         }
 
         [BeforeScenario(Order = 1)]
         public void FirstBeforeScenario(ScenarioContext scenarioContext)
         {
-            Console.WriteLine("Running before scenario In Chrme");
+            logger.Info($"Starting Scenario: {scenarioContext.ScenarioInfo.Title}");
+         
+                Console.WriteLine("==== Test Execution Started ====");
+                logger.Info("NLog is working - BeforeTestRun");
 
-            var options = new ChromeOptions();
+             var options = new ChromeOptions();
             //driver = new RemoteWebDriver(new Uri("http://localhost:4444/"), options);
-     
+
             driver = WebDriverFactory.CreateWebDriver("chrome");
             Container.RegisterInstanceAs<IWebDriver>(driver);
             driver.Navigate().GoToUrl("https://www.youtube.com");
             driver.Manage().Window.Maximize();
-           
+
             //_scenario = _feature.CreateNode(scenarioContext.ScenarioInfo.Title);
         }
 
         [AfterScenario]
-        public void AfterScenario()
+        public void AfterScenario(ScenarioContext scenarioContext)
         {
-            Console.WriteLine("Running after scenario");
+            logger.Info($"Scenario Completed: {scenarioContext.ScenarioInfo.Title}");
+
             var driver = Container.Resolve<IWebDriver>();
             if (driver != null)
             {
@@ -112,6 +124,8 @@ namespace SpecFlowProject1.Hooks
             //When Scenario fails
             if (scenarioContext.TestError != null)
             {
+                logger.Error($"Step Failed: {scenarioContext.StepContext.StepInfo.Text}");
+                logger.Error($"Error Message: {scenarioContext.TestError.Message}");
                 AllureApi.AddAttachment("Screenshot", "image/png", addScreenShot(driver, scenarioContext));
 
                 //if (stepType == "Given")
