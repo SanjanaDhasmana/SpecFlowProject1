@@ -67,14 +67,27 @@ namespace SpecFlowProject1.Hooks
         public void FirstBeforeScenario(ScenarioContext scenarioContext)
         {
             logger.Info($"Starting Scenario: {scenarioContext.ScenarioInfo.Title}");
-         
-                Console.WriteLine("==== Test Execution Started ====");
-                logger.Info("NLog is working - BeforeTestRun");
 
-             var options = new ChromeOptions();
+            string browser = Environment.GetEnvironmentVariable("BROWSER") ?? "Chrome";
+
+            if (browser.Equals("Chrome", StringComparison.OrdinalIgnoreCase))
+            {
+                ChromeOptions chromeOptions = new ChromeOptions();
+                driver = new ChromeDriver(chromeOptions);
+            }
+            else if (browser.Equals("Firefox", StringComparison.OrdinalIgnoreCase))
+            {
+                var firefoxOptions = new FirefoxOptions();
+                driver = new FirefoxDriver(firefoxOptions);
+            }
+            else
+            {
+                throw new Exception("Unsupported browser: " + browser);
+            }
+
             //driver = new RemoteWebDriver(new Uri("http://localhost:4444/"), options);
 
-            driver = WebDriverFactory.CreateWebDriver("chrome");
+           // driver = WebDriverFactory.CreateWebDriver("chrome");
             Container.RegisterInstanceAs<IWebDriver>(driver);
             driver.Navigate().GoToUrl("https://www.youtube.com");
             driver.Manage().Window.Maximize();
